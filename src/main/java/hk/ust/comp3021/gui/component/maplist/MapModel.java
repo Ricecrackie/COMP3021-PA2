@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,7 +30,14 @@ public record MapModel(String name, Path file, Date loadAt, GameMap gameMap) {
      * @throws IOException When fails to access the file.
      */
     public static MapModel load(URL gameMapURL) throws IOException {
-        var gameMapFile = Paths.get(gameMapURL.getPath());
+
+        Path gameMapFile = null;
+        try {
+            gameMapFile = Paths.get(gameMapURL.toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
         var reader = new BufferedReader(new InputStreamReader(gameMapURL.openStream()));
         var content = reader.lines().collect(Collectors.joining("\n"));
         var gameMap = GameMap.parse(content);

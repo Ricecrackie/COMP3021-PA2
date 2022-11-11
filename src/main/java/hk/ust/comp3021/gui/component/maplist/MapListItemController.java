@@ -2,6 +2,8 @@ package hk.ust.comp3021.gui.component.maplist;
 
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -40,6 +42,11 @@ public class MapListItemController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // TODO
+        mapModelProperty.addListener((observable, oldValue, newValue) -> {
+            this.mapName.setText(newValue.name());
+            this.mapFilePath.setText(newValue.file().toString());
+            this.loadAt.setText(newValue.loadAt().toString());
+        });
     }
 
     /**
@@ -48,4 +55,7 @@ public class MapListItemController implements Initializable {
     public Property<MapModel> getMapModelProperty() {
         return mapModelProperty;
     }
+
+
+
 }

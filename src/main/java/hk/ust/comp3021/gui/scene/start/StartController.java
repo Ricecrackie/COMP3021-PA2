@@ -5,9 +5,17 @@ import hk.ust.comp3021.gui.component.maplist.MapList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.input.DragEvent;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -36,6 +44,8 @@ public class StartController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // TODO
+        this.mapList.getController().addMap(getClass().getClassLoader().getResource("map00.map"));
+        this.mapList.getController().addMap(getClass().getClassLoader().getResource("map01.map"));
     }
 
     /**
@@ -48,6 +58,19 @@ public class StartController implements Initializable {
     @FXML
     private void onLoadMapBtnClicked(ActionEvent event) {
         // TODO
+        var node = (Node) event.getSource();
+        Stage thisStage = (Stage) node.getScene().getWindow();
+        final var fc = new FileChooser();
+        File selectedFile = fc.showOpenDialog(thisStage);
+        if (selectedFile != null) {
+            try {
+                mapList.getController().addMap(selectedFile.toURI().toURL());
+            } catch (Exception e) {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setContentText("Invalid map file.");
+                errorAlert.showAndWait();
+            }
+        }
     }
 
     /**
@@ -57,6 +80,8 @@ public class StartController implements Initializable {
     @FXML
     public void onDeleteMapBtnClicked() {
         // TODO
+        int index = mapList.getController().getListIndex();
+        mapList.getController().deleteMap(index);
     }
 
     /**

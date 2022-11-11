@@ -12,6 +12,8 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
     private Stage primaryStage;
+    private StartScene start;
+    private GameScene game;
 
     /**
      * Set up the primary stage and show the {@link StartScene}.
@@ -26,8 +28,10 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Sokoban Game - COMP3021 2022Fall");
-
         // TODO
+        this.start = new StartScene();
+        primaryStage.setScene(start);
+        primaryStage.show();
     }
 
     /**
@@ -38,6 +42,8 @@ public class App extends Application {
      */
     public void onOpenMap(MapEvent event) {
         // TODO
+
+
     }
 
     /**
