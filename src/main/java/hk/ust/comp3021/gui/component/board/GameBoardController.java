@@ -78,7 +78,6 @@ public class GameBoardController implements RenderingEngine, Initializable {
                             map.add(cell, j, i);
                         }
                     }
-
                     String undoText = "Undo Quota: ";
                     undoText += state.getUndoQuota().isPresent()? state.getUndoQuota().get().toString() : "unlimited";
                     undoQuota.setText(undoText);

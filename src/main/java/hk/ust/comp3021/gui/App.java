@@ -8,8 +8,6 @@ import hk.ust.comp3021.gui.scene.start.StartScene;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 /**
  * The JavaFX application that launches the game.
  */
@@ -50,7 +48,7 @@ public class App extends Application {
         try {
             this.game = new GameScene(new GameState(event.getModel().gameMap()));
             primaryStage.setScene(this.game);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

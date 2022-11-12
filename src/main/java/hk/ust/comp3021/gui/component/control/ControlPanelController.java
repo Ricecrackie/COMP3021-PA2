@@ -1,9 +1,9 @@
 package hk.ust.comp3021.gui.component.control;
 
 import hk.ust.comp3021.actions.Action;
+import hk.ust.comp3021.actions.Undo;
 import hk.ust.comp3021.entities.Player;
 import hk.ust.comp3021.game.InputEngine;
-import hk.ust.comp3021.utils.NotImplementedException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,7 +15,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -68,6 +67,7 @@ public class ControlPanelController implements Initializable, InputEngine {
      */
     public void onUndo(ActionEvent event) {
         // TODO
+        queue.add(new Undo(-1));
     }
 
     /**

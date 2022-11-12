@@ -2,19 +2,18 @@ package hk.ust.comp3021.gui.scene.start;
 
 import hk.ust.comp3021.gui.component.maplist.MapEvent;
 import hk.ust.comp3021.gui.component.maplist.MapList;
+import hk.ust.comp3021.gui.component.maplist.MapModel;
 import hk.ust.comp3021.gui.utils.Message;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -68,6 +67,11 @@ public class StartController implements Initializable {
         File selectedFile = fc.showOpenDialog(thisStage);
         if (selectedFile != null) {
             try {
+                var map = MapModel.load(selectedFile.toURI().toURL());
+                if (map.gameMap().getPlayerIds().size() > 4) {
+                    Message.error("Load map failed", "There can only be at most 4 players in a map.");
+                    return;
+                }
                 mapList.getController().addMap(selectedFile.toURI().toURL());
             } catch (Exception e) {
                 Message.error("Load map failed", e.getMessage());
@@ -84,7 +88,6 @@ public class StartController implements Initializable {
         // TODO
         int index = mapList.getController().getListIndex();
         mapList.getController().deleteMap(index);
-        System.out.println(mapList.getController().getCount());
         if (mapList.getController().getCount() == 0) {
             setButtons(true);
         }
@@ -139,6 +142,11 @@ public class StartController implements Initializable {
         var f = dragEvent.getDragboard().getFiles();
         for (var file : f) {
             try {
+                var map = MapModel.load(file.toURI().toURL());
+                if (map.gameMap().getPlayerIds().size() > 4) {
+                    Message.error("Load map failed", "There can only be at most 4 players in a map.");
+                    return;
+                }
                 mapList.getController().addMap(file.toURI().toURL());
             } catch (Exception e) {
                 Message.error("Load map failed", e.getMessage());
