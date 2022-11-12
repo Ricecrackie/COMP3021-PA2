@@ -39,7 +39,14 @@ public class MapListController implements Initializable {
     public void addMap(URL path) {
         //URL path = getClass().getClassLoader().getResource(name);
         try {
-            mapModelObservableList.add(MapModel.load(path));
+            var map = MapModel.load(path);
+            for (var entry : mapModelObservableList) {
+                if (entry.file().compareTo(map.file()) == 0) {
+                    mapModelObservableList.remove(entry);
+                    break;
+                }
+            }
+            mapModelObservableList.add(map);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -50,5 +57,11 @@ public class MapListController implements Initializable {
     }
     public void deleteMap(int index) {
         mapModelObservableList.remove(index);
+    }
+    public int getCount() {
+        return mapModelObservableList.size();
+    }
+    public MapModel getMap(int index) {
+        return list.getItems().get(index);
     }
 }

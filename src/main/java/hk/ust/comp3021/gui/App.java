@@ -1,11 +1,14 @@
 package hk.ust.comp3021.gui;
 
+import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.gui.component.maplist.MapEvent;
 import hk.ust.comp3021.gui.scene.game.ExitEvent;
 import hk.ust.comp3021.gui.scene.game.GameScene;
 import hk.ust.comp3021.gui.scene.start.StartScene;
 import javafx.application.Application;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 /**
  * The JavaFX application that launches the game.
@@ -32,6 +35,8 @@ public class App extends Application {
         this.start = new StartScene();
         primaryStage.setScene(start);
         primaryStage.show();
+        primaryStage.addEventHandler(MapEvent.OPEN_MAP_EVENT_TYPE, this::onOpenMap);
+        primaryStage.addEventHandler(ExitEvent.EVENT_TYPE, this::onExitGame);
     }
 
     /**
@@ -42,8 +47,12 @@ public class App extends Application {
      */
     public void onOpenMap(MapEvent event) {
         // TODO
-
-
+        try {
+            this.game = new GameScene(new GameState(event.getModel().gameMap()));
+            primaryStage.setScene(this.game);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -54,5 +63,6 @@ public class App extends Application {
      */
     public void onExitGame(ExitEvent event) {
         // TODO
+        primaryStage.setScene(start);
     }
 }

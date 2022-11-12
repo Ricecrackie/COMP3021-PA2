@@ -2,6 +2,7 @@ package hk.ust.comp3021.gui.scene.start;
 
 import hk.ust.comp3021.gui.component.maplist.MapEvent;
 import hk.ust.comp3021.gui.component.maplist.MapList;
+import hk.ust.comp3021.gui.utils.Message;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,13 +10,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -46,6 +46,10 @@ public class StartController implements Initializable {
         // TODO
         this.mapList.getController().addMap(getClass().getClassLoader().getResource("map00.map"));
         this.mapList.getController().addMap(getClass().getClassLoader().getResource("map01.map"));
+        setButtons(true);
+        this.mapList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            setButtons(false);
+        });
     }
 
     /**
@@ -66,9 +70,7 @@ public class StartController implements Initializable {
             try {
                 mapList.getController().addMap(selectedFile.toURI().toURL());
             } catch (Exception e) {
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setContentText("Invalid map file.");
-                errorAlert.showAndWait();
+                Message.error("Load map failed", e.getMessage());
             }
         }
     }
@@ -82,6 +84,15 @@ public class StartController implements Initializable {
         // TODO
         int index = mapList.getController().getListIndex();
         mapList.getController().deleteMap(index);
+        System.out.println(mapList.getController().getCount());
+        if (mapList.getController().getCount() == 0) {
+            setButtons(true);
+        }
+    }
+
+    private void setButtons(boolean disable) {
+        openButton.setDisable(disable);
+        deleteButton.setDisable(disable);
     }
 
     /**
@@ -92,6 +103,10 @@ public class StartController implements Initializable {
     @FXML
     public void onOpenMapBtnClicked() {
         // TODO
+        int index = mapList.getController().getListIndex();
+        var e = new MapEvent(MapEvent.OPEN_MAP_EVENT_TYPE, mapList.getController().getMap(index));
+        Node node = openButton.getScene().getRoot();
+        node.fireEvent(e);
     }
 
     /**
@@ -103,6 +118,9 @@ public class StartController implements Initializable {
     @FXML
     public void onDragOver(DragEvent event) {
         // TODO
+        if (event.getDragboard().hasFiles()) {
+            event.acceptTransferModes(TransferMode.LINK);
+        }
     }
 
     /**
@@ -118,6 +136,13 @@ public class StartController implements Initializable {
     @FXML
     public void onDragDropped(DragEvent dragEvent) {
         // TODO
+        var f = dragEvent.getDragboard().getFiles();
+        for (var file : f) {
+            try {
+                mapList.getController().addMap(file.toURI().toURL());
+            } catch (Exception e) {
+                Message.error("Load map failed", e.getMessage());
+            }
+        }
     }
-
 }

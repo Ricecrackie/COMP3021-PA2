@@ -1,16 +1,23 @@
 package hk.ust.comp3021.gui.scene.game;
 
+import hk.ust.comp3021.actions.Action;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.gui.component.board.GameBoard;
 import hk.ust.comp3021.gui.component.control.ControlPanel;
+import hk.ust.comp3021.gui.component.control.ControlPanelController;
+import hk.ust.comp3021.gui.component.control.MovementButtonGroupController;
 import hk.ust.comp3021.gui.utils.Resource;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingDeque;
 
 /**
  * Control logic for {@link GameScene}.
@@ -39,6 +46,9 @@ public class GameSceneController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // TODO
+        var queue = new ArrayBlockingQueue<Action>(10);
+        ControlPanelController.setQueue(queue);
+        MovementButtonGroupController.setQueue(queue);
     }
 
     /**
@@ -65,5 +75,8 @@ public class GameSceneController implements Initializable {
     @FXML
     public void onExit(ActionEvent event) {
         // TODO
+        var node = (Node)(event.getSource());
+        Stage thisStage = (Stage) node.getScene().getWindow();
+        thisStage.fireEvent(new ExitEvent());
     }
 }

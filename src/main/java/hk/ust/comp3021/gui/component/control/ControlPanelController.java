@@ -10,8 +10,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.FlowPane;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Control logic for a {@link ControlPanel}.
@@ -21,6 +26,8 @@ import java.util.ResourceBundle;
 public class ControlPanelController implements Initializable, InputEngine {
     @FXML
     private FlowPane playerControls;
+    private List<MovementButtonGroup> movementButtonGroups;
+    static BlockingQueue<Action> queue = null;
 
     /**
      * Fetch the next action made by users.
@@ -31,7 +38,12 @@ public class ControlPanelController implements Initializable, InputEngine {
     @Override
     public @NotNull Action fetchAction() {
         // TODO
-        throw new NotImplementedException();
+        try {
+            var action = queue.take();
+            return action;
+        } catch (InterruptedException e) {
+            throw new RuntimeException();
+        }
     }
 
     /**
@@ -45,6 +57,7 @@ public class ControlPanelController implements Initializable, InputEngine {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // TODO
+        movementButtonGroups = new ArrayList<>();
     }
 
     /**
@@ -66,6 +79,19 @@ public class ControlPanelController implements Initializable, InputEngine {
      */
     public void addPlayer(Player player, URL playerImageUrl) {
         // TODO
+        try {
+            var newPlayer = new MovementButtonGroup();
+            newPlayer.getController().setPlayer(player);
+            newPlayer.getController().setPlayerImage(playerImageUrl);
+            movementButtonGroups.add(newPlayer);
+            playerControls.getChildren().add(newPlayer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void setQueue(BlockingQueue<Action> bQueue) {
+        queue = bQueue;
     }
 
 }
