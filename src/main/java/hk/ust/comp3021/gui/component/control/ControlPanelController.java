@@ -38,8 +38,7 @@ public class ControlPanelController implements Initializable, InputEngine {
     public @NotNull Action fetchAction() {
         // TODO
         try {
-            var action = queue.take();
-            return action;
+            return queue.take();
         } catch (InterruptedException e) {
             throw new RuntimeException();
         }

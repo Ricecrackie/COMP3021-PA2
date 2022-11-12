@@ -46,9 +46,7 @@ public class StartController implements Initializable {
         this.mapList.getController().addMap(getClass().getClassLoader().getResource("map00.map"));
         this.mapList.getController().addMap(getClass().getClassLoader().getResource("map01.map"));
         setButtons(true);
-        this.mapList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            setButtons(false);
-        });
+        this.mapList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> setButtons(false));
     }
 
     /**
@@ -145,7 +143,7 @@ public class StartController implements Initializable {
                 var map = MapModel.load(file.toURI().toURL());
                 if (map.gameMap().getPlayerIds().size() > 4) {
                     Message.error("Load map failed", "There can only be at most 4 players in a map.");
-                    return;
+                    continue;
                 }
                 mapList.getController().addMap(file.toURI().toURL());
             } catch (Exception e) {

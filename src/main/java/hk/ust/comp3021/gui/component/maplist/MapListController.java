@@ -40,11 +40,10 @@ public class MapListController implements Initializable {
         //URL path = getClass().getClassLoader().getResource(name);
         try {
             var map = MapModel.load(path);
-            for (var entry : mapModelObservableList) {
-                if (entry.file().compareTo(map.file()) == 0) {
-                    mapModelObservableList.remove(entry);
-                    break;
-                }
+            MapModel m = mapModelObservableList.stream()
+                    .filter(entry->entry.file().compareTo(map.file()) == 0).findFirst().orElse(null);
+            if (m != null) {
+                mapModelObservableList.remove(m);
             }
             mapModelObservableList.add(map);
         } catch (IOException e) {

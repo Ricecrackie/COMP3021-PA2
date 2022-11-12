@@ -46,46 +46,46 @@ public class GameBoardController implements RenderingEngine, Initializable {
         final URL wall = Resource.getWallImageURL();
         final URL empty = Resource.getEmptyImageURL();
         final URL destination = Resource.getDestinationImageURL();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i = 0; i < row; ++i) {
-                        for (int j = 0; j < column; ++j) {
-                            Cell cell = new Cell();
-                            URL imageURL = null;
-                            Position pos = new Position(j, i);
-                            boolean isDestination = isDestination(pos,state);
-                            switch (state.getEntity(pos)) {
-                                case null:
-                                    continue;
-                                case Box b:
-                                    imageURL = Resource.getBoxImageURL(b.getPlayerId());
-                                    if (isDestination) {
-                                        cell.getController().markAtDestination();
-                                    }
-                                    break;
-                                case Empty e:
-                                    imageURL = isDestination? destination : empty;
-                                    break;
-                                case Player p:
-                                    imageURL = Resource.getPlayerImageURL(p.getId());
-                                    break;
-                                case Wall w:
-                                    imageURL = wall;
-                            }
-                            cell.getController().setImage(imageURL);
-                            map.add(cell, j, i);
+        Platform.runLater(() -> {
+            try {
+                for (int i = 0; i < row; ++i) {
+                    for (int j = 0; j < column; ++j) {
+                        Cell cell = new Cell();
+                        URL imageURL = null;
+                        Position pos = new Position(j, i);
+                        boolean isDestination = isDestination(pos,state);
+                        final var entity = state.getEntity(pos);
+                        switch (entity) {
+                            case null:
+                                continue;
+                            case Box b:
+                                imageURL = Resource.getBoxImageURL(b.getPlayerId());
+                                if (isDestination) {
+                                    cell.getController().markAtDestination();
+                                }
+                                break;
+                            case Empty ignored:
+                                imageURL = isDestination? destination : empty;
+                                break;
+                            case Player p:
+                                imageURL = Resource.getPlayerImageURL(p.getId());
+                                break;
+                            case Wall ignored:
+                                imageURL = wall;
                         }
+                        if (imageURL != null) {
+                            cell.getController().setImage(imageURL);
+                        }
+                        map.add(cell, j, i);
                     }
-                    String undoText = "Undo Quota: ";
-                    undoText += state.getUndoQuota().isPresent()? state.getUndoQuota().get().toString() : "unlimited";
-                    undoQuota.setText(undoText);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException();
                 }
+                String undoText = "Undo Quota: ";
+                undoText += state.getUndoQuota().isPresent()? state.getUndoQuota().get().toString() : "unlimited";
+                undoQuota.setText(undoText);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException();
             }
         });
     }
